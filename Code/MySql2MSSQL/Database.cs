@@ -12,14 +12,15 @@ namespace MySql2MSSQL
     {
 
         private DbProviderFactory _factory;
-        private IDbConnection _conn;
+        private ConnectionManager _manager;
 
-        public Database(DbConnection conn)
+        public Database(Arguments args)
         {
-            _factory = DbProviderFactories.GetFactory(conn);
-            _conn = conn;
+            _manager = new ConnectionManager(args);
+            _factory = DbProviderFactories.GetFactory(_manager.GetConnection());
         }
 
+        public Arguments Args { get; private set; }
 
         public int ExecuteNonQuery(string command)
         {
@@ -54,16 +55,23 @@ namespace MySql2MSSQL
 
         public void WithCommand(string command, Action<IDbCommand> withCommand)
         {
-            using (var conn = _factory.CreateConnection())
-            {
-                conn.ConnectionString = _conn.ConnectionString;
-                conn.Open();
+            WithConnection((conn) => {
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = command;
-                    cmd.CommandTimeout = _conn.ConnectionTimeout;
+                    cmd.CommandTimeout = Args.Timeout;
                     withCommand(cmd);
                 }
+            });
+        }
+
+        public void WithConnection(Action<IDbConnection> withConnection)
+        {
+            using(var conn = _factory.CreateConnection())
+            {
+                conn.ConnectionString = _manager.GetConnectionString();
+                conn.Open();
+                withConnection(conn);
                 conn.Close();
             }
         }
