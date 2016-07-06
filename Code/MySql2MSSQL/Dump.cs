@@ -18,7 +18,7 @@ namespace MySql2MSSQL
             Db = new Database(Args);
             _helper = new SqlHelper(Args);
         }
-        private int _expected;
+        
         private DateTime _startedOn;
         private SqlHelper _helper;
         public Database Db { get; private set; }
@@ -43,7 +43,7 @@ namespace MySql2MSSQL
                     {
                         ProcessRow(r, stream);
                         count++;
-                        ProgressBar(totalCount, count);
+                        Log.LogProgress(totalCount, count, _startedOn);
                     });
                     offset += Args.BatchSize;
                 }
@@ -54,22 +54,6 @@ namespace MySql2MSSQL
         private string GetSelect(long offset)
         {
             return string.Format("SELECT * FROM {0} LIMIT {1},{2}", Args.TableName, offset, Args.BatchSize);
-        }
-
-        private void ProgressBar(double total, double count)
-        {
-            const int barSize = 30;
-            var progress = (double)((count / total) * 100);
-            var progressStr = progress.ToString("N2");
-            var barProgress = (int)((progress * barSize) / 100);
-            if (((progress % 5) == 0) || count == 1)
-            {
-                var now = DateTime.Now;
-                var duration = now.Subtract(_startedOn).TotalSeconds;
-                _expected = (int)((total * duration) / count);
-            }
-            var bar = string.Format("[{0}] {1}% ETA: {2}", (new string('=', barProgress)).PadRight(barSize), progressStr, _startedOn.AddSeconds(_expected).ToString("ddd, HH:mm:ss"));
-            Log.Log(string.Format("\r{0}", bar));
         }
 
         private void ProcessRow(IDataReader reader, StreamWriter stream)

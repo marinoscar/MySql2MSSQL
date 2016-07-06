@@ -10,5 +10,7 @@ namespace MySql2MSSQL
     {
         void Log(string message);
         void LogLine(string message);
+
+        void LogProgress(double total, double count, DateTime processStartTime);
     }
 }
