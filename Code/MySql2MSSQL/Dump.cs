@@ -16,9 +16,11 @@ namespace MySql2MSSQL
             Args = args;
             Log = log;
             Db = new Database(Args);
+            _helper = new SqlHelper(Args);
         }
         private int _expected;
         private DateTime _startedOn;
+        private SqlHelper _helper;
         public Database Db { get; private set; }
         public Arguments Args { get; private set; }
         public ILogger Log { get; private set; }
@@ -77,17 +79,22 @@ namespace MySql2MSSQL
 
         private void ProcessCsv(IDataReader reader, StreamWriter stream)
         {
+            stream.WriteLine(ToCsv(reader));
+        }
+
+        private string ToCsv(IDataReader reader)
+        {
             var values = new List<string>();
             for (int i = 0; i < reader.FieldCount; i++)
             {
                 values.Add(string.Format(@"""{0}""", Parse(reader.GetValue(i))));
             }
-            stream.WriteLine(string.Join(",", values));
+            return string.Join(",", values);
         }
 
         private void ProcessSql(IDataReader reader, StreamWriter stream)
         {
-            throw new FriendlyException("Sql Server file not implemented yet");
+            stream.WriteLine(_helper.GetCommand(ToCsv(reader)));
         }
 
         private string Parse(object val)
