@@ -66,7 +66,7 @@ namespace MySql2MSSQL
                 var duration = now.Subtract(_startedOn).TotalSeconds;
                 _expected = (int)((total * duration) / count);
             }
-            var bar = string.Format("[{0}] {1}% ETA: {2}", (new string('=', barProgress)).PadRight(barSize), progressStr, _startedOn.AddSeconds(_expected).ToString("hh:mm:ss"));
+            var bar = string.Format("[{0}] {1}% ETA: {2}", (new string('=', barProgress)).PadRight(barSize), progressStr, _startedOn.AddSeconds(_expected).ToString("ddd, HH:mm:ss"));
             Log.Log(string.Format("\r{0}", bar));
         }
 
