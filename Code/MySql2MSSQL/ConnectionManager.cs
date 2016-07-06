@@ -27,7 +27,13 @@ namespace MySql2MSSQL
 
         public DbConnection GetConnection()
         {
-            return IsMysql() ? ((DbConnection)new MySqlConnection(GetConnectionString())) : ((DbConnection)new SqlConnection(GetConnectionString()));
+            DbConnection result = null;
+            var conStr = GetConnectionString();
+            if (IsMysql())
+                result = new MySqlConnection(conStr);
+            else
+                result = new SqlConnection(conStr);
+            return result;
         }
 
 
