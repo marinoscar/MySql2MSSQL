@@ -15,7 +15,7 @@ namespace MySql2MSSQL
             var connMgr = new ConnectionManager(args);
             Args = args;
             Log = log;
-            Db = new Database(connMgr.GetConnection());
+            Db = new Database(Args);
         }
         private int _expected;
         private DateTime _startedOn;
