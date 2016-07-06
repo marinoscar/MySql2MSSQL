@@ -16,6 +16,7 @@ namespace MySql2MSSQL
 
         public Database(Arguments args)
         {
+            Args = args;
             _manager = new ConnectionManager(args);
             _factory = DbProviderFactories.GetFactory(_manager.GetConnection());
         }
