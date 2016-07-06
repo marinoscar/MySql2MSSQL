@@ -24,6 +24,11 @@ namespace MySql2MSSQL
                     var dump = new Dump(arguments, new ConsoleLogger());
                     dump.DoDump();
                 }
+                if(arguments.Target == "mssql")
+                {
+                    var ms = new MsSqlImport(arguments, new ConsoleLogger());
+                    ms.DoImport();
+                }
             }
             catch (FriendlyException fex)
             {

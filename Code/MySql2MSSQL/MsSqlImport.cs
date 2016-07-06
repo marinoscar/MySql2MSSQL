@@ -28,19 +28,26 @@ namespace MySql2MSSQL
 
         public void DoImport()
         {
+            Log.LogLine(string.Format("Starting import imto {0}", Args.TableName));
             using (var stream = new StreamReader(Args.FileName))
             {
+                var totalSize = stream.BaseStream.Length;
+                var currentCount = 0L;
+                var start = DateTime.Now;
                 var count = 0L;
                 var sb = new StringBuilder();
                 while (!stream.EndOfStream)
                 {
-                    sb.AppendLine(_helper.GetCommand(stream.ReadLine()));
+                    var line = stream.ReadLine();
+                    currentCount += line.Length;
+                    sb.AppendLine(_helper.GetCommand(line));
                     count++;
                     if(count > Args.BatchSize)
                     {
                         Db.ExecuteNonQuery(sb.ToString());
                         sb.Clear();
                         count = 0;
+                        Log.LogProgress(totalSize, currentCount, start);
                     }
                 }
                 stream.Close();
