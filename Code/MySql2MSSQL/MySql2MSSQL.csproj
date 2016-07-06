@@ -56,6 +56,7 @@
     <Compile Include="Dump.cs" />
     <Compile Include="FriendlyException.cs" />
     <Compile Include="ILogger.cs" />
+    <Compile Include="MsSqlImport.cs" />
     <Compile Include="MysqlDump.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
