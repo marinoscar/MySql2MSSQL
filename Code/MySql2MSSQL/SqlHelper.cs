@@ -35,7 +35,11 @@ namespace MySql2MSSQL
                     items.Add(values[i]);
                 else
                 {
-                    items.Add(string.Format("'{0}'", values[i].Replace("'", "''")));
+                    var val = values[i];
+                    if (val == null || val == string.Empty)
+                        items.Add("NULL");
+                    else
+                        items.Add(string.Format("'{0}'", val.Replace("'", "''")));
                 }
             }
             return string.Join(",", items);
